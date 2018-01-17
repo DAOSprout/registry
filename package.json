@@ -1,0 +1,31 @@
+{
+  "name": "dapp_template",
+  "version": "1.0.0",
+  "main": "truffle.js",
+  "scripts": {
+    "truffle": "truffle",
+    "lint:eslint": "eslint .",
+    "lint:eslint:fix": "eslint . --fix",
+    "lint:solium": "solium -d .",
+    "lint:solium:fix": "solium -d . --fix",
+    "lint": "npm run lint:solium && npm run lint:eslint",
+    "lint:fix": "npm run lint:solium:fix && npm run lint:eslint:fix"
+  },
+  "author": "Eliott TEISSONNIERE",
+  "dependencies": {
+    "babel-polyfill": "^6.26.0",
+    "babel-preset-env": "^1.6.1",
+    "babel-preset-stage-2": "^6.24.1",
+    "babel-preset-stage-3": "^6.24.1",
+    "babel-register": "^6.26.0",
+    "eslint": "^4.15.0",
+    "eslint-config-standard": "^11.0.0-beta.0",
+    "eslint-plugin-import": "^2.8.0",
+    "eslint-plugin-node": "^5.2.1",
+    "eslint-plugin-promise": "^3.6.0",
+    "eslint-plugin-standard": "^3.0.1",
+    "solium": "^1.1.2",
+    "truffle": "^4.0.3",
+    "truffle-hdwallet-provider": "0.0.3"
+  }
+}
