@@ -37,20 +37,17 @@ contract Registry is Ownable {
         _;
     }
 
-    function Registry(uint _feeInWei) Ownable()  public {
+    function Registry(uint _feeInWei) Ownable() public {
         feeInWei = _feeInWei;
-
-        // TODO path to repo here
-        register(address(this), "Registry", "");
     }
 
-    function withdrawFees() onlyOwner  public {
+    function withdrawFees() onlyOwner public {
         msg.sender.transfer(this.balance);
         
         CollectedFee(msg.sender);
     }
 
-    function updateFee(uint _newFeeInWei) onlyOwner  public {
+    function updateFee(uint _newFeeInWei) onlyOwner public {
         feeInWei = _newFeeInWei;
 
         CollectedFee(msg.sender);
@@ -60,7 +57,7 @@ contract Registry is Ownable {
         return (entries[_entry].owner, entries[_entry].name, entries[_entry].info);
     }
 
-    function register(address _entry, bytes32 _name, bytes32 _info) mustPayFee  public {
+    function register(address _entry, bytes32 _name, bytes32 _info) mustPayFee public payable {
         // Entry must not exist
         require(entries[_entry].owner == 0x0);
 
