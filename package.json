@@ -1,5 +1,5 @@
 {
-  "name": "dapp_template",
+  "name": "eth_registry",
   "version": "1.0.0",
   "main": "truffle.js",
   "scripts": {
