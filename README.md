@@ -1,7 +1,6 @@
 # Ethereum registry
 
 
-
 ## First use
 
   - You will need to clone the repo via `git clone <url>`.
@@ -22,3 +21,7 @@
 ### Testing
 
   - `npm run truffle test`.
+
+
+# Copyright and Intellectual Property
+This source code has been developed and published by [Eliott TEISSONNIERE](http://eliott.tech) for DAOSprout, it is covered by an `AGPLv3` license, please see the file `LICENSE` for more informations.
