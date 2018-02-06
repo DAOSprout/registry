@@ -50,7 +50,7 @@ contract Registry is Ownable {
     function updateFee(uint _newFeeInWei) onlyOwner public {
         feeInWei = _newFeeInWei;
 
-        CollectedFee(msg.sender);
+        UpdatedFee(_newFeeInWei, msg.sender);
     }
 
     function getEntry(address _entry) constant public returns (address, bytes32, bytes32) {
