@@ -1,7 +1,7 @@
 pragma solidity ^0.4.16;
 
 /**
- * @author Eliott TEISSONNIERE
+ * @author Eliott TEISSONNIERE, Brian
  * @title Registry
  * @description Registry ethereum entities (mostly contracts), users pay to get registered. 
  */
@@ -15,15 +15,17 @@ contract Registry is Ownable {
 
         bytes32 name;
         bytes32 info;
+        bytes32 status;
     }
 
     mapping (address => Entry) public entries;
     uint public feeInWei;
 
-    event AddedEntry(address indexed entryAddress, bytes32 name, bytes32 info, address indexed owner);
+    event AddedEntry(address indexed entryAddress, bytes32 name, bytes32 info, bytes32 indexed status, address indexed owner);
     event UpdatedOwnership(address indexed entryAddress, address indexed newOwner, address indexed oldOwner);
     event UpdatedName(address indexed entryAddress, bytes32 name, address indexed owner);
     event UpdatedInfo(address indexed entryAddress, bytes32 info, address indexed owner);
+    event UpdatedStatus(address indexed entryAddress, bytes32 status, address indexed owner);
     event UpdatedFee(uint newFee, address indexed owner);
     event CollectedFee(address indexed owner);
 
@@ -53,24 +55,26 @@ contract Registry is Ownable {
         CollectedFee(msg.sender);
     }
 
-    function getEntry(address _entry) constant public returns (address, bytes32, bytes32) {
-        return (entries[_entry].owner, entries[_entry].name, entries[_entry].info);
+    function getEntry(address _entry) constant public returns (address, bytes32, bytes32, bytes32) {
+        return (entries[_entry].owner, entries[_entry].name, entries[_entry].info, entries[_entry].status);
     }
 
-    function register(address _entry, bytes32 _name, bytes32 _info) mustPayFee public payable {
+    function register(address _entry, bytes32 _name, bytes32 _info, bytes32 _status) mustPayFee public payable {
         // Entry must not exist
         require(entries[_entry].owner == 0x0);
 
         entries[_entry] = Entry({
             owner: msg.sender,
             name: _name,
-            info: _info
+            info: _info,
+            status: _status
         });
 
         AddedEntry(
             _entry,
             _name,
             _info,
+            _status,
             msg.sender
         );
     }
@@ -85,6 +89,12 @@ contract Registry is Ownable {
         entries[_entry].info = _info;
 
         UpdatedInfo(_entry, _info, msg.sender);
+    }
+
+    function setStatus(address _entry, bytes32 _newStatus) onlyEntryOwner(_entry)  public {
+        entries[_entry].status = _newStatus;
+
+        UpdatedStatus(_entry, _newStatus, msg.sender);
     }
 
     function transferEntryOwnership(address _entry, address _newOwner) onlyEntryOwner(_entry)  public {

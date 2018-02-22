@@ -27,44 +27,46 @@ contract('Registry', function (accounts) {
     let address = '0x01'
     let name = 'Test stub name'
     let info = 'Test stub info'
+    let status = 'vf'
 
     it('register entity when fee is paid', async function () {
       // Should not throw
-      await registry.register(address, name, info, {value: fee})
+      await registry.register(address, name, info, status, {value: fee})
     })
 
     it('refuses higher fees', async function () {
-      await assertRevert(registry.register(address, name, info, {value: fee * 2}))
+      await assertRevert(registry.register(address, name, info, status, {value: fee * 2}))
     })
 
     it('refuses lower fees', async function () {
-      await assertRevert(registry.register(address, name, info, {value: fee / 2}))
+      await assertRevert(registry.register(address, name, info, status, {value: fee / 2}))
     })
 
     it('returns the correct entry values', async function () {
-      await registry.register(address, name, info, {value: fee})
+      await registry.register(address, name, info, status, {value: fee})
 
       let allValues = await registry.getEntry(address)
       assert.equal(accounts[0], allValues[0])
       assert.equal(name, cleanAscii(allValues[1]))
       assert.equal(info, cleanAscii(allValues[2]))
+      assert.equal(status, cleanAscii(allValues[3]))
     })
 
     it('cannot overwrite entry', async function () {
       // Simply attempt to register twice the same entry
-      await registry.register(address, name, info, {value: fee})
-      await assertRevert(registry.register(address, name, info, {value: fee}))
+      await registry.register(address, name, info, status, {value: fee})
+      await assertRevert(registry.register(address, name, info, status, {value: fee}))
     })
 
     context('Updates', function () {
       it('refuses access if not entry owner', async function () {
-        await registry.register(address, name, info, {value: fee})
+        await registry.register(address, name, info, status, {value: fee})
 
         await assertRevert(registry.setName(address, 'Please fail', {from: accounts[1]}))
       })
 
       it('updates name', async function () {
-        await registry.register(address, name, info, {value: fee})
+        await registry.register(address, name, info, status, {value: fee})
         await registry.setName(address, 'New')
 
         let newValues = await registry.getEntry(address)
@@ -74,7 +76,7 @@ contract('Registry', function (accounts) {
       })
 
       it('updates info', async function () {
-        await registry.register(address, name, info, {value: fee})
+        await registry.register(address, name, info, status, {value: fee})
         await registry.setInfo(address, 'New')
 
         let newValues = await registry.getEntry(address)
@@ -83,8 +85,18 @@ contract('Registry', function (accounts) {
         assert.equal('New', cleanAscii(newInfo))
       })
 
+      it('updates status', async function () {
+        await registry.register(address, name, info, status, {value: fee})
+        await registry.setStatus(address, 'rt')
+
+        let newValues = await registry.getEntry(address)
+
+        let newInfo = newValues[3]
+        assert.equal('rt', cleanAscii(newInfo))
+      })
+
       it('transfer ownership', async function () {
-        await registry.register(address, name, info, {value: fee})
+        await registry.register(address, name, info, status, {value: fee})
         await registry.transferEntryOwnership(address, accounts[1])
 
         let newValues = await registry.getEntry(address)
@@ -111,7 +123,7 @@ contract('Registry', function (accounts) {
 
     it('moves fees collected', async function () {
       // Send some $$$
-      await registry.register('0x0', 'name', 'info', {value: fee})
+      await registry.register('0x0', 'name', 'info', 'status', {value: fee})
 
       // Check balance
       let balance = await web3.eth.getBalance(registry.address)
